@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <title>{% block title %}Silent Crisis{% endblock %}</title>
+  <link rel="icon" href="{{ url_for('static', filename='icon.svg') }}" type="image/svg+xml">
+  {% block head %}{% endblock %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="{% block body_class %}{% endblock %}">
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="{{ url_for('auth.landing') }}">
+        <svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true"><path d="M2 17h7l3-9 6 17 4-11 2 3h6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Silent Crisis</span>
+      </a>
+      <nav class="nav" aria-label="Main">
+        {% if g.user and g.user.role == 'student' %}
+          <a href="{{ url_for('student.dashboard') }}">Dashboard</a>
+          <a href="{{ url_for('student.setup') }}">Setup</a>
+          <a href="{{ url_for('student.history') }}">History</a>
+          <a href="{{ url_for('student.help_map') }}">Nearby help</a>
+        {% elif g.user %}
+          <a href="{{ url_for('admin.dashboard') }}">Incidents</a>
+        {% endif %}
+        {% if g.user %}
+          <form method="post" action="{{ url_for('auth.logout') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="link-button" type="submit">Log out</button>
+          </form>
+        {% else %}
+          <a href="{{ url_for('auth.login') }}">Log in</a>
+          <a class="btn btn-small btn-accent" href="{{ url_for('auth.signup') }}">Sign up</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <div class="wrap flashes" aria-live="polite">
+    {% for category, message in get_flashed_messages(with_categories=true) %}
+      <p class="flash flash-{{ category }}">{{ message }}</p>
+    {% endfor %}
+  </div>
+
+  <main id="main">{% block content %}{% endblock %}</main>
+
+  <div id="toasts" class="toasts" aria-live="assertive"></div>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

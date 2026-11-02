@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · Silent Crisis{% endblock %}
+{% block content %}
+<div class="wrap page" id="dashboard" data-feed="{{ url_for('student.monitor_feed') }}">
+  <div class="page-head">
+    <h1>Hello, {{ g.user.name }}</h1>
+    <span class="live" id="live-state" data-state="connecting">Connecting</span>
+  </div>
+
+  {% if missing %}
+    <p class="banner banner-warn">Finish setup to turn on protection: add your {{ missing | join(', ') }}. <a href="{{ url_for('student.setup') }}">Go to setup</a></p>
+  {% endif %}
+
+  <div class="dash-grid">
+    <section class="card monitor-card">
+      <div class="card-head">
+        <h2>Monitoring</h2>
+        <span class="indicator" id="indicator" data-on="false">Off</span>
+      </div>
+      <div class="video-frame">
+        <img id="feed" alt="Live webcam preview, stored nowhere" hidden>
+        <div class="video-empty" id="video-empty">
+          <svg viewBox="0 0 48 48" width="44" height="44" aria-hidden="true"><path d="M6 14h26v20H6zM32 21l10-6v18l-10-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>
+          <p>The webcam is off.</p>
+        </div>
+      </div>
+      <p class="muted" id="person-note" hidden></p>
+
+      <form id="monitor-form" class="form">
+        <label>Video source
+          <select id="source">
+            <option value="webcam">Webcam</option>
+            {% for name in samples %}<option value="{{ name }}">Recorded video: {{ name }}</option>{% endfor %}
+          </select>
+        </label>
+        <label class="check">
+          <input type="checkbox" id="consent">
+          <span>I agree to webcam monitoring until I stop it. Video stays on this device and is not saved. If an alert goes out, my name, the time and my location go to my trusted contact and the campus admin.</span>
+        </label>
+        <div class="actions">
+          <button class="btn btn-primary" type="submit" id="start" {% if missing %}disabled{% endif %}>Start monitoring</button>
+          <button class="btn btn-ghost-dark" type="button" id="stop" hidden>Stop</button>
+        </div>
+      </form>
+    </section>
+
+    <div class="side-stack">
+      <section class="card sos-card">
+        <h2>Need help now?</h2>
+        <p class="muted">Starts the same 10-second countdown, then alerts your contact.</p>
+        <button class="btn-sos" id="sos" type="button" {% if missing %}disabled{% endif %}>SOS</button>
+      </section>
+
+      <section class="card">
+        <h2>Trusted contact</h2>
+        {% if contact %}
+          <p><strong>{{ contact.name }}</strong><br><span class="muted">{{ contact.email }}</span></p>
+        {% else %}
+          <p class="muted">None yet.</p>
+        {% endif %}
+        <a href="{{ url_for('student.setup') }}">Change setup</a>
+      </section>
+    </div>
+
+    <section class="card recent-card">
+      <div class="card-head">
+        <h2>Recent activity</h2>
+        <a href="{{ url_for('student.history') }}">All history</a>
+      </div>
+      <div id="recent" data-url="{{ url_for('student.recent') }}">{% include "_recent.html" %}</div>
+    </section>
+  </div>
+</div>
+
+<div class="overlay" id="countdown" role="alertdialog" aria-modal="true" aria-labelledby="count-title" hidden>
+  <div class="overlay-card">
+    <p class="eyebrow" id="count-trigger">Possible fall detected</p>
+    <h2 id="count-title">Alerting your contact in</h2>
+    <div class="ring">
+      <svg viewBox="0 0 120 120" aria-hidden="true">
+        <circle class="ring-track" cx="60" cy="60" r="52"/>
+        <circle class="ring-fill" id="ring-fill" cx="60" cy="60" r="52" pathLength="100"/>
+      </svg>
+      <output id="count-number" aria-live="off">10</output>
+    </div>
+    <form id="pin-form" class="pin-form">
+      <label for="pin">Enter your PIN if you're fine</label>
+      <input id="pin" type="password" inputmode="numeric" pattern="\d{4}" maxlength="4" autocomplete="off" required>
+      <button class="btn btn-light" type="submit">Cancel alert</button>
+    </form>
+    <p class="pin-message" id="pin-message" role="status"></p>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='dashboard.js') }}"></script>{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Incidents · Silent Crisis{% endblock %}
+{% block content %}
+<div class="wrap page" id="admin" data-api="{{ url_for('admin.incidents') }}">
+  <div class="page-head">
+    <h1>Incidents</h1>
+    <span class="live" id="live-state" data-state="connecting">Connecting</span>
+  </div>
+
+  <div class="stats">
+    <div class="stat stat-alert"><span id="stat-new">0</span>New</div>
+    <div class="stat"><span id="stat-open">0</span>In progress</div>
+    <div class="stat"><span id="stat-resolved">0</span>Resolved</div>
+    <div class="stat"><span id="stat-false">0</span>False alarms</div>
+  </div>
+
+  <div class="admin-grid">
+    <section class="card incidents-card">
+      <div class="card-head">
+        <h2>All incidents</h2>
+        <label class="inline">Show
+          <select id="filter">
+            <option value="open">Open</option>
+            <option value="all">All</option>
+          </select>
+        </label>
+      </div>
+      <ul class="admin-list" id="incident-list"></ul>
+      <p class="muted" id="empty" hidden>No incidents to show.</p>
+    </section>
+
+    <section class="card detail-card" id="detail" hidden>
+      <div class="card-head">
+        <h2 id="d-student"></h2>
+        <button class="link-button link-dark" id="d-close" type="button">Close</button>
+      </div>
+      <p class="banner banner-alert" id="d-duress" hidden>Duress PIN used. The student may be under pressure, and their screen shows this as cancelled.</p>
+      <dl class="details">
+        <dt>Student email</dt><dd id="d-email"></dd>
+        <dt>Time</dt><dd id="d-time"></dd>
+        <dt>Trigger source</dt><dd id="d-trigger"></dd>
+        <dt>Confidence</dt><dd id="d-confidence"></dd>
+        <dt>Location</dt><dd id="d-location"></dd>
+        <dt>Trusted contact</dt><dd id="d-contact"></dd>
+        <dt>Contact email</dt><dd id="d-email-status"></dd>
+      </dl>
+      <div class="actions">
+        <a class="btn btn-ghost-dark" id="d-map" target="_blank" rel="noopener" hidden>Open map</a>
+        <a class="btn btn-ghost-dark" id="d-page" target="_blank" rel="noopener">Alert page</a>
+      </div>
+      <form id="status-form" class="form">
+        <label>Status
+          <select id="d-status">
+            <option value="New" disabled>New</option>
+            {% for status in statuses %}<option value="{{ status }}">{{ status }}</option>{% endfor %}
+          </select>
+        </label>
+        <button class="btn btn-primary" type="submit">Update status</button>
+        <p class="muted small">Marking False alarm sends the contact an all clear.</p>
+      </form>
+    </section>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='admin.js') }}"></script>{% endblock %}

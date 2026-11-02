@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Nearby help · Silent Crisis{% endblock %}
+{% block head %}{% include "_leaflet.html" %}{% endblock %}
+{% block content %}
+<div class="wrap page" id="help-map"
+     data-lat="{{ g.user.location_lat if g.user.location_lat is not none else '' }}"
+     data-lng="{{ g.user.location_lng if g.user.location_lng is not none else '' }}"
+     data-label="{{ g.user.location_label or '' }}">
+  <h1>Nearby help</h1>
+  <p class="muted" id="map-status">Finding your location…</p>
+  <div class="grid-map">
+    <div id="map" class="map" aria-label="Map of nearby police stations and hospitals"></div>
+    <section class="card">
+      <h2>Within 5 km</h2>
+      <ul id="places" class="place-list"><li class="muted">Searching…</li></ul>
+      <p class="muted small">Place data comes from OpenStreetMap volunteers and may be incomplete. Your position is sent to the OpenStreetMap search service for this lookup. In an emergency, call 112.</p>
+    </section>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='help_map.js') }}"></script>{% endblock %}

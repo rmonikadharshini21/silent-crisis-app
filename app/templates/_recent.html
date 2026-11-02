@@ -1,0 +1,7 @@
+{% if recent %}
+  <ul class="incident-list">
+    {% for incident in recent %}{% include "_incident_row.html" %}{% endfor %}
+  </ul>
+{% else %}
+  <p class="muted">Nothing yet.</p>
+{% endif %}

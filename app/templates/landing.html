@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Silent Crisis: help that doesn't wait for a button{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="eyebrow">Campus safety prototype</p>
+      <h1>Help that doesn't wait for a button press.</h1>
+      <p class="lead">If a student falls while alone and can't reach a phone, Silent Crisis notices through their own webcam and alerts someone they trust, with a location.</p>
+      <div class="actions">
+        <a class="btn btn-accent" href="{{ url_for('auth.signup') }}">Create an account</a>
+        <a class="btn btn-ghost" href="{{ url_for('auth.login') }}">Log in</a>
+      </div>
+    </div>
+    <svg class="hero-art" viewBox="0 0 420 300" role="img" aria-label="A body outline falling, with an alert pulse line beneath it">
+      <path class="hero-pulse" d="M0 250h120l18-48 28 92 24-62 14 18h216" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      <g fill="none" stroke-width="7" stroke-linecap="round" class="hero-figure">
+        <circle cx="130" cy="58" r="20"/>
+        <path d="M142 78l58 62M200 140l56 8M200 140l-8 58M165 102l50-12M165 102l-44 28"/>
+      </g>
+      <g class="hero-count">
+        <circle cx="330" cy="92" r="52" fill="none" stroke-width="6"/>
+        <text x="330" y="108" text-anchor="middle" font-size="44" font-weight="700">10</text>
+      </g>
+    </svg>
+  </div>
+</section>
+
+<section class="wrap section">
+  <h2>How it works</h2>
+  <ol class="steps">
+    <li><strong>You choose when</strong><span>Accept the consent notice and start monitoring. A clear indicator shows it's on.</span></li>
+    <li><strong>A fall is noticed</strong><span>Body pose rules look for a sudden drop, then a low position with little movement.</span></li>
+    <li><strong>10 seconds to cancel</strong><span>If you're fine, enter your PIN and nobody is told.</span></li>
+    <li><strong>The right people know</strong><span>Your contact gets the alert and location. Campus staff track it through to resolution.</span></li>
+  </ol>
+</section>
+
+<section class="band">
+  <div class="wrap two-col">
+    <div>
+      <h2>Your privacy is built in</h2>
+      <ul class="ticks">
+        <li>Monitoring runs only after you turn it on.</li>
+        <li>Video stays on the device. It is never saved or uploaded.</li>
+        <li>No face recognition and no shared cameras.</li>
+        <li>Your name, time and location are shared only when an alert goes out.</li>
+      </ul>
+    </div>
+    <div>
+      <h2>What it can't do</h2>
+      <ul class="crosses">
+        <li>It only sees what's in the webcam's view, so it can't help on streets or buses.</li>
+        <li>It detects falls only, not harassment or other threats.</li>
+        <li>It gives a warning signal, not proof. Alerts say "possible fall, not confirmed".</li>
+        <li>It does not call police or an ambulance. People decide the response.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer class="wrap footer">
+  <p>A hackathon prototype. Accuracy hasn't been tested in real conditions. In an emergency, call 112.</p>
+</footer>
+{% endblock %}

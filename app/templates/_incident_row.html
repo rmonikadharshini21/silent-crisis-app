@@ -1,0 +1,11 @@
+<li class="incident-row">
+  <div>
+    <strong>{{ 'Manual SOS' if incident.trigger_source == 'SOS' else 'Possible fall' }}</strong>
+    <time class="muted" data-local datetime="{{ incident.started_at }}">{{ incident.started_at }}</time>
+  </div>
+  {% if incident.state == 'cancelled' %}
+    <span class="badge badge-quiet">Cancelled</span>
+  {% else %}
+    <span class="badge badge-{{ incident.status | lower | replace(' ', '-') }}">{{ incident.status }}</span>
+  {% endif %}
+</li>

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Setup · Silent Crisis{% endblock %}
+{% block content %}
+<div class="wrap page">
+  <h1>Setup</h1>
+  {% if missing %}
+    <p class="banner banner-warn">Still needed before monitoring can start: {{ missing | join(', ') }}.</p>
+  {% else %}
+    <p class="banner banner-ok">Setup is complete. <a href="{{ url_for('student.dashboard') }}">Go to your dashboard</a></p>
+  {% endif %}
+
+  <div class="grid-2">
+    <section class="card">
+      <h2>Trusted contact</h2>
+      <p class="muted">This person is told if an alert goes out.</p>
+      <form method="post" action="{{ url_for('student.save_contact') }}" class="form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>Name <input name="name" value="{{ contact.name if contact else '' }}" maxlength="80" required></label>
+        <label>Email <input type="email" name="email" value="{{ contact.email if contact else '' }}" required></label>
+        <button class="btn btn-primary" type="submit">Save contact</button>
+      </form>
+      {% if contact %}
+        <div class="share">
+          <p><strong>Private link for {{ contact.name }}</strong></p>
+          <p class="muted">Share this so alerts still reach them if email fails. Anyone with the link can see your alerts.</p>
+          <input readonly value="{{ config.BASE_URL }}{{ url_for('contact.inbox', token=contact.token) }}" aria-label="Private contact link" data-select-on-focus>
+        </div>
+      {% endif %}
+    </section>
+
+    <section class="card">
+      <h2>Cancel PIN</h2>
+      <p class="muted">Enter this during the countdown to stop a false alarm.</p>
+      <form method="post" action="{{ url_for('student.save_pin') }}" class="form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>4-digit PIN {% if g.user.pin_hash %}<small>(a PIN is set; enter it again or choose a new one)</small>{% endif %}
+          <input type="password" name="pin" inputmode="numeric" pattern="\d{4}" maxlength="4" autocomplete="new-password" required></label>
+        <label>Duress PIN <small>(optional{% if g.user.duress_pin_hash %}; one is set{% endif %})</small>
+          <input type="password" name="duress_pin" inputmode="numeric" pattern="\d{4}" maxlength="4" autocomplete="new-password">
+          <small>If someone forces you to cancel, this PIN looks like a cancel but still sends the alert.</small></label>
+        <button class="btn btn-primary" type="submit">Save PIN</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Saved location</h2>
+      <p class="muted">Used if your browser can't share a live location.</p>
+      <form method="post" action="{{ url_for('student.save_location') }}" class="form" id="location-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>Description <input name="label" value="{{ g.user.location_label or '' }}" maxlength="120" placeholder="Hostel block, room number" required></label>
+        <input type="hidden" name="lat" value="{{ g.user.location_lat if g.user.location_lat is not none else '' }}">
+        <input type="hidden" name="lng" value="{{ g.user.location_lng if g.user.location_lng is not none else '' }}">
+        <p class="muted" id="coords-note">{% if g.user.location_lat is not none %}Map position saved.{% else %}No map position saved yet. This is optional.{% endif %}</p>
+        <div class="actions">
+          <button class="btn btn-ghost-dark" type="button" id="use-location">Use my current position</button>
+          <button class="btn btn-primary" type="submit">Save location</button>
+        </div>
+      </form>
+    </section>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='setup.js') }}"></script>{% endblock %}

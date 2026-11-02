@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}History · Silent Crisis{% endblock %}
+{% block content %}
+<div class="wrap page narrow">
+  <h1>Incident history</h1>
+  <section class="card">
+    {% if incidents %}
+      <ul class="incident-list">
+        {% for incident in incidents %}{% include "_incident_row.html" %}{% endfor %}
+      </ul>
+    {% else %}
+      <p class="muted">No incidents yet.</p>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Alerts for {{ contact.student }} · Silent Crisis{% endblock %}
+{% block content %}
+<div class="wrap page narrow" data-events="{{ url_for('contact.inbox_events', token=contact.token) }}" id="contact-live">
+  <div class="page-head">
+    <h1>Alerts for {{ contact.student }}</h1>
+    <span class="live" id="live-state" data-state="connecting">Connecting</span>
+  </div>
+  <p class="muted">{{ contact.name }}, {{ contact.student }} listed you as a trusted contact. This page updates by itself.</p>
+  <section class="card">
+    {% if alerts %}
+      <ul class="incident-list">
+        {% for alert in alerts %}
+        <li class="incident-row">
+          <div>
+            <strong><a href="{{ url_for('contact.alert_page', token=alert.token) }}">{{ 'Manual SOS' if alert.trigger_source == 'SOS' else 'Possible fall, not confirmed' }}</a></strong>
+            <time class="muted" data-local datetime="{{ alert.alerted_at }}">{{ alert.alerted_at }}</time>
+          </div>
+          {% if alert.all_clear_at %}
+            <span class="badge badge-resolved">All clear</span>
+          {% else %}
+            <span class="badge badge-{{ alert.status | lower | replace(' ', '-') }}">{{ alert.status }}</span>
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="muted">No alerts. You don't need to do anything.</p>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='contact.js') }}"></script>{% endblock %}

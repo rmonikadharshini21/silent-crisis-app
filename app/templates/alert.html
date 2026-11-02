@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Alert for {{ incident.student }} · Silent Crisis{% endblock %}
+{% block head %}{% if map_link %}{% include "_leaflet.html" %}{% endif %}{% endblock %}
+{% block content %}
+<div class="wrap page narrow" id="contact-live"
+     {% if incident.contact_token %}data-events="{{ url_for('contact.inbox_events', token=incident.contact_token) }}"{% endif %}>
+  {% if incident.all_clear_at %}
+    <p class="banner banner-ok"><strong>All clear.</strong> Campus staff marked this alert as a false alarm.</p>
+  {% elif incident.trigger_source == 'SOS' %}
+    <p class="banner banner-alert"><strong>Manual SOS.</strong> {{ incident.student }} asked for help.</p>
+  {% else %}
+    <p class="banner banner-alert"><strong>Possible fall, not confirmed.</strong> Please try to reach {{ incident.student }}.</p>
+  {% endif %}
+  {% if incident.duress and not incident.all_clear_at %}
+    <p class="banner banner-alert">The alert was sent using a duress PIN, so they may be under pressure. Avoid contacting them in a way that could put them at risk.</p>
+  {% endif %}
+  <section class="card">
+    <h1>{{ incident.student }}</h1>
+    <dl class="details">
+      <dt>Time</dt><dd><time data-local datetime="{{ incident.alerted_at }}">{{ incident.alerted_at }}</time></dd>
+      <dt>Location</dt>
+      <dd>{{ incident.location_label }}{% if incident.location_source == 'saved' %} <span class="badge badge-quiet">Saved location</span>{% endif %}</dd>
+      <dt>Campus status</dt><dd><span class="badge badge-{{ incident.status | lower | replace(' ', '-') }}">{{ incident.status }}</span></dd>
+    </dl>
+    {% if map_link %}
+      <div id="map" class="map map-small" data-lat="{{ incident.location_lat }}" data-lng="{{ incident.location_lng }}" aria-label="Map of the reported location"></div>
+      <p><a href="{{ map_link }}" target="_blank" rel="noopener">Open in OpenStreetMap</a></p>
+    {% endif %}
+    <p class="muted small">This is a warning signal, not proof of an emergency. In an emergency, call 112.</p>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='contact.js') }}"></script>{% endblock %}
